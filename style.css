@@ -1,0 +1,168 @@
+:root {
+  --bg: #121014;
+  --panel: #1b181d;
+  --text: #eae7ea;
+  --muted: #a8a2ab;
+  --accent: #e0459a;
+  --rule: #2c2830;
+  --max-width: 700px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 48px 24px 96px;
+}
+
+header.site {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 24px 24px 0;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+
+.brand .mark {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: linear-gradient(155deg, #3a1224, #17090f);
+  border: 1px solid rgba(224, 69, 154, 0.45);
+  display: grid;
+  place-items: center;
+}
+
+.brand .mark svg {
+  width: 14px;
+  height: 14px;
+}
+
+nav.crumbs {
+  font-size: 0.9rem;
+}
+
+nav.crumbs a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+nav.crumbs a:hover,
+nav.crumbs a:focus-visible {
+  color: var(--accent);
+}
+
+h1 {
+  font-size: 2rem;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+}
+
+.updated {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin: 0 0 40px;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin: 40px 0 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--rule);
+}
+
+h2:first-of-type {
+  border-top: none;
+  padding-top: 0;
+}
+
+h3 {
+  font-size: 0.95rem;
+  color: var(--accent);
+  margin: 20px 0 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+p, li {
+  color: #d8d4d9;
+  font-size: 1rem;
+}
+
+strong {
+  color: var(--text);
+}
+
+a {
+  color: var(--accent);
+}
+
+ul {
+  padding-left: 1.2em;
+}
+
+li + li {
+  margin-top: 6px;
+}
+
+hr {
+  display: none;
+}
+
+code {
+  background: var(--panel);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+footer.site {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  color: var(--muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--rule);
+}
+
+footer.site a {
+  color: var(--muted);
+}
+
+footer.site a:hover,
+footer.site a:focus-visible {
+  color: var(--accent);
+}
+
+@media (max-width: 480px) {
+  h1 { font-size: 1.6rem; }
+  .wrap { padding-top: 32px; }
+}
