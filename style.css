@@ -162,6 +162,71 @@ footer.site a:focus-visible {
   color: var(--accent);
 }
 
+details.faq {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+}
+
+details.faq summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+details.faq summary::-webkit-details-marker {
+  display: none;
+}
+
+details.faq summary::after {
+  content: "+";
+  color: var(--accent);
+  font-size: 1.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+details.faq[open] summary::after {
+  transform: rotate(45deg);
+}
+
+details.faq p {
+  margin: 12px 0 0;
+  font-size: 0.92rem;
+  color: #c9c4cc;
+}
+
+.contact-card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.contact-card a {
+  font-weight: 600;
+}
+
+.contact-card .note {
+  color: var(--muted);
+  font-size: 0.85rem;
+  width: 100%;
+}
+
 @media (max-width: 480px) {
   h1 { font-size: 1.6rem; }
   .wrap { padding-top: 32px; }
