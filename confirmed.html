@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Confirm Your Email — BlindSpot Track</title>
+<meta name="description" content="Confirm your BlindSpot Track account email address.">
+<link rel="stylesheet" href="/style.css">
+<style>
+  .reset-wrap { max-width: 420px; margin: 96px auto; padding: 0 24px; text-align: center; }
+  .reset-wrap h1 { font-size: 1.6rem; margin-bottom: 8px; }
+  .reset-wrap p.sub { color: var(--muted); font-size: 0.95rem; margin-bottom: 32px; }
+  button.submit {
+    width: 100%;
+    padding: 13px;
+    border-radius: 999px;
+    border: none;
+    background: var(--accent);
+    color: #17090f;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 8px;
+  }
+  button.submit:disabled { opacity: 0.5; cursor: default; }
+  .status { margin-top: 16px; font-size: 0.9rem; }
+  .status.error { color: #ff6b8a; }
+  .status.success { color: #4ade80; font-size: 1.05rem; }
+  #gateState.hidden, #successState.hidden, #errorState.hidden { display: none; }
+</style>
+</head>
+<body>
+<header class="site">
+  <a class="brand" href="/">
+    <span class="mark">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="3.2" stroke="#e0459a" stroke-width="1.6"/>
+        <path d="M7 5.5c-1 0-1.5.5-1.5 1.5M17 5.5c1 0 1.5.5 1.5 1.5M7 18.5c-1 0-1.5-.5-1.5-1.5M17 18.5c1 0 1.5-.5 1.5-1.5" stroke="#e0459a" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </span>
+    BlindSpot Track
+  </a>
+</header>
+
+<div class="reset-wrap">
+  <h1>Confirm Your Email</h1>
+  <p class="sub" id="subText">Tap below to confirm your email address.</p>
+
+  <div id="gateState">
+    <button type="button" class="submit" id="continueBtn">Confirm Email Address</button>
+  </div>
+
+  <div id="successState" class="hidden">
+    <p class="status success">✓ Your email has been confirmed.</p>
+    <p class="sub" style="margin-top: 12px;">You can close this page and log in in the BlindSpot Track app.</p>
+  </div>
+
+  <div id="errorState" class="hidden">
+    <p class="status error" id="errorMessage">This confirmation link is invalid or has expired.</p>
+    <p class="sub" style="margin-top: 12px;">Go back to the app and try signing up again from the Register screen.</p>
+  </div>
+</div>
+
+<footer class="site">
+  © 2026 BlindSpot Track · <a href="mailto:contact@blindspottrack.app">contact@blindspottrack.app</a>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  // Same pattern as reset-password.html — see that file's comments
+  // for the full reasoning. Short version: `token_hash` + `verifyOtp`
+  // (not PKCE) because signup happens in the iOS app but confirming
+  // happens in whatever browser opens this page from the email link,
+  // and only `verifyOtp` works reliably across that boundary. The
+  // confirmation only ever runs from the button's click handler, not
+  // on page load, so an email provider's link-scanner prefetching
+  // this page's HTML can't burn the token before a real click does.
+  const SUPABASE_URL = "https://lyflmzufkykzdoanjutk.supabase.co";
+  const SUPABASE_ANON_KEY = "sb_publishable_mmBj_TA9q1r1w6W_kLENGg_YM1nmcnU";
+
+  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const gateState = document.getElementById('gateState');
+  const continueBtn = document.getElementById('continueBtn');
+  const successState = document.getElementById('successState');
+  const errorState = document.getElementById('errorState');
+  const subText = document.getElementById('subText');
+
+  function showError(message) {
+    gateState.classList.add('hidden');
+    errorState.classList.remove('hidden');
+    document.getElementById('errorMessage').textContent = message;
+  }
+
+  function showSuccess() {
+    gateState.classList.add('hidden');
+    successState.classList.remove('hidden');
+  }
+
+  continueBtn.addEventListener('click', async () => {
+
+    gateState.classList.add('hidden');
+    subText.textContent = 'Confirming…';
+
+    const params = new URLSearchParams(window.location.search);
+    const tokenHash = params.get('token_hash');
+    const type = params.get('type') || 'signup';
+
+    if (!tokenHash) {
+      showError('This confirmation link is invalid or has expired.');
+      return;
+    }
+
+    const { error } = await supabaseClient.auth.verifyOtp({
+      token_hash: tokenHash,
+      type
+    });
+
+    if (error) {
+      showError('This confirmation link is invalid or has expired.');
+    } else {
+      showSuccess();
+    }
+  });
+</script>
+</body>
+</html>
