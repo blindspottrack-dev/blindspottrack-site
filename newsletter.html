@@ -124,6 +124,17 @@
   .app p { margin: 0.5rem 0 0; color: var(--ink-soft); max-width: 36rem; }
   .app a.btn { display: inline-block; background: var(--accent); color: var(--accent-ink); font-weight: 700; text-decoration: none; padding: 0.9rem 1.4rem; border-radius: 12px; }
 
+  .unsub { border-top: 1px solid var(--line); padding: 2rem 0 3rem; max-width: 34rem; }
+  .unsub h2 { font-size: 1.35rem; font-weight: 800; margin-bottom: 0.4rem; }
+  .unsub p { color: var(--ink-soft); margin: 0 0 1rem; }
+  .unsub-row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+  .unsub-row input { flex: 1 1 14rem; margin-bottom: 0; }
+  button.ghost { font: inherit; font-weight: 600; cursor: pointer; background: transparent; color: var(--ink); border: 1.5px solid var(--field); border-radius: 12px; padding: 0.75rem 1.2rem; }
+  button.ghost:disabled { opacity: .6; cursor: progress; }
+  #unsub-status { margin: 1rem 0 0; min-height: 1.5rem; font-weight: 500; }
+  #unsub-status.err { color: var(--error); }
+  #unsub-status.ok { color: var(--ok); }
+
   footer { border-top: 1px solid var(--line); padding: 1.5rem 0 2.5rem; font-size: 0.95rem; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; }
 
@@ -166,9 +177,6 @@
         <p class="sub">One email a week. Unsubscribe any time.</p>
 
         <form id="form" novalidate>
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" autocomplete="given-name" required maxlength="80">
-
           <label for="email">Email</label>
           <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required maxlength="200">
 
@@ -219,11 +227,25 @@
       </div>
       <a class="btn" href="https://apps.apple.com/pl/app/blindspot-track/id6802796631" rel="noopener">Download on the App Store</a>
     </section>
+
+    <section class="unsub" id="unsubscribe" aria-labelledby="unsub-title">
+      <h2 id="unsub-title">Unsubscribe</h2>
+      <p>Enter the email address you signed up with. I'll remove it from the list before the next email goes out.</p>
+      <form id="unsub-form" novalidate>
+        <label for="unsub-email">Email</label>
+        <div class="unsub-row">
+          <input type="email" id="unsub-email" autocomplete="email" inputmode="email" required maxlength="200">
+          <button type="submit" class="ghost" id="unsub-submit">Unsubscribe</button>
+        </div>
+        <p id="unsub-status" role="status" aria-live="polite"></p>
+      </form>
+    </section>
   </div>
 </main>
 
 <footer>
   <div class="wrap">
+    <a href="#unsubscribe">Unsubscribe</a>
     <a href="/privacy">Privacy Policy</a>
     <a href="/terms">Terms of Service</a>
     <a href="/faq">FAQ &amp; Contact</a>
@@ -253,11 +275,9 @@
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    var name = form.name.value.trim();
     var email = form.email.value.trim();
 
     if (form.website.value) { say("You're subscribed.", "ok"); return; } // bot trap
-    if (!name) { say("Enter your name.", "err"); form.name.focus(); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say("Enter a valid email address.", "err"); form.email.focus(); return; }
     if (!form.consent.checked) { say("Tick the box to confirm you want the newsletter.", "err"); form.consent.focus(); return; }
 
@@ -271,7 +291,7 @@
         "apikey": SUPABASE_ANON_KEY,
         "Prefer": "return=minimal"
       },
-      body: JSON.stringify({ name: name, email: email.toLowerCase(), lgbtq_events: form.lgbtq.checked })
+      body: JSON.stringify({ email: email.toLowerCase(), lgbtq_events: form.lgbtq.checked })
     }).then(function (res) {
       // 409 = this email is already on the list. Treat it as success.
       if (res.ok || res.status === 409) {
@@ -285,6 +305,45 @@
       say("Something went wrong. Check your connection and try again.", "err");
     }).then(function () {
       btn.disabled = false;
+    });
+  });
+
+  // ---- Unsubscribe: saves the address as a request; it is removed before the next send ----
+  var uForm = document.getElementById("unsub-form");
+  var uStatus = document.getElementById("unsub-status");
+  var uBtn = document.getElementById("unsub-submit");
+
+  function uSay(msg, kind) { uStatus.textContent = msg; uStatus.className = kind || ""; }
+
+  uForm.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var email = document.getElementById("unsub-email").value.trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { uSay("Enter a valid email address.", "err"); return; }
+    if (!window.confirm("Remove " + email + " from the BlindSpot Track newsletter?")) { return; }
+
+    uBtn.disabled = true;
+    uSay("Sending request…");
+
+    fetch(SUPABASE_URL + "/rest/v1/newsletter_unsubscribe_requests", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({ email: email })
+    }).then(function (res) {
+      if (res.ok) {
+        uForm.reset();
+        uSay("Done. You won't get the next email.", "ok");
+      } else {
+        return res.text().then(function (t) { throw new Error("status " + res.status + " " + t); });
+      }
+    }).catch(function (err) {
+      console.error("Unsubscribe request failed:", err);
+      uSay("Something went wrong. Try again, or write to me and I'll remove you.", "err");
+    }).then(function () {
+      uBtn.disabled = false;
     });
   });
 </script>
