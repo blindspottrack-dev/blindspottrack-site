@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#121014">
 <title>Weekly newsletter · BlindSpot Track</title>
 <meta name="description" content="Every week, one or two free event addresses per city: Warsaw, Kraków, Bydgoszcz and Wrocław, picked by the founder of BlindSpot Track.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -10,16 +11,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --paper: #f3f4f9;
-    --ink: #151a33;
-    --ink-soft: #4a5070;
-    --accent: #3a3fe0;
-    --accent-ink: #ffffff;
-    --card: #ffffff;
-    --line: #d9dcec;
-    --error: #b3261e;
-    --ok: #1d6b45;
-    color-scheme: light;
+    --paper: #121014;      /* site --bg */
+    --ink: #eae7ea;        /* site --text */
+    --ink-soft: #a8a2ab;   /* site --muted */
+    --accent: #e0459a;     /* site --accent */
+    --accent-ink: #121014;
+    --card: #1b181d;       /* site --panel */
+    --line: #2c2830;       /* site --rule */
+    --field: #4a4350;
+    --error: #ff8f85;
+    --ok: #7fd6a4;
+    color-scheme: dark;
   }
   * { box-sizing: border-box; }
   html { scroll-padding-top: 1rem; }
@@ -55,17 +57,29 @@
   /* the memorable element: a redacted address you can reveal */
   .sample { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.5rem; margin-top: 2rem; max-width: 34rem; }
   .sample-tag { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 0.75rem; }
+  /* category pill: mirrors EventCategoryBadge in the app */
+  .pill {
+    display: inline-block; margin: 0 0 0.75rem;
+    font: 700 10.5px/12px "SF Pro Rounded", ui-rounded, "Arial Rounded MT Bold", system-ui, sans-serif;
+    letter-spacing: 0.6px; text-transform: uppercase; color: #fff;
+    text-shadow: 0 1px 0.5px rgba(0,0,0,.55);
+    padding: 7px 12px; border-radius: 999px;
+    border: 1px solid rgba(var(--rgb), .9);
+    background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 50%),
+                linear-gradient(180deg, rgb(var(--rgb)), rgba(var(--rgb), .7));
+    box-shadow: 0 2px 4px rgba(var(--rgb), .35);
+  }
   .sample h2 { font-size: 1.5rem; font-weight: 800; }
   .sample dl { margin: 1rem 0 0; display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1rem; }
   .sample dt { color: var(--ink-soft); }
   .sample dd { margin: 0; }
   .redact {
     font: inherit; color: inherit; cursor: pointer; text-align: left;
-    background: var(--ink); color: var(--ink); border: 0; border-radius: 6px;
+    background: var(--ink); color: var(--paper); border: 1px solid var(--ink); border-radius: 6px;
     padding: 0.05rem 0.6rem; min-width: 12rem; transition: background .25s, color .25s;
   }
-  .redact[aria-pressed="true"] { background: #e3e5fb; color: var(--ink); }
-  .redact .hint { color: #fff; font-size: 0.9rem; }
+  .redact[aria-pressed="true"] { background: transparent; color: var(--ink); border-color: var(--accent); }
+  .redact .hint { color: var(--paper); font-size: 0.9rem; font-weight: 600; }
   .redact[aria-pressed="true"] .hint { display: none; }
   .redact .real { display: none; }
   .redact[aria-pressed="true"] .real { display: inline; }
@@ -75,13 +89,17 @@
   .panel p.sub { margin: 0 0 1.25rem; color: var(--ink-soft); }
   label { display: block; font-weight: 600; margin: 0 0 0.35rem; }
   input[type="text"], input[type="email"] {
-    width: 100%; font: inherit; color: var(--ink); background: #fff;
-    border: 1.5px solid #aab0cf; border-radius: 10px; padding: 0.75rem 0.9rem; margin-bottom: 1.1rem;
+    width: 100%; font: inherit; color: var(--ink); background: var(--paper);
+    border: 1.5px solid var(--field); border-radius: 10px; padding: 0.75rem 0.9rem; margin-bottom: 1.1rem;
   }
   input[type="text"]:focus-visible, input[type="email"]:focus-visible { outline-offset: 1px; }
   .consent { display: flex; gap: 0.7rem; align-items: flex-start; font-size: 0.95rem; color: var(--ink-soft); margin-bottom: 1.25rem; }
   .consent input { margin-top: 0.3rem; width: 1.15rem; height: 1.15rem; flex: none; accent-color: var(--accent); }
   .consent label { font-weight: 400; margin: 0; }
+  .pref { display: flex; gap: 0.7rem; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 12px; padding: 0.85rem 0.9rem; margin-bottom: 1.1rem; }
+  .pref input { margin-top: 0.3rem; width: 1.15rem; height: 1.15rem; flex: none; accent-color: var(--accent); }
+  .pref label { font-weight: 600; margin: 0; }
+  .pref small { display: block; font-weight: 400; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.4; margin-top: 0.15rem; }
   .hp { position: absolute; left: -9999px; height: 0; width: 0; overflow: hidden; }
 
   button.go {
@@ -100,12 +118,11 @@
 
   .cities { border-top: 1px solid var(--line); padding: 1.5rem 0; color: var(--ink-soft); }
 
-  .app { background: var(--ink); color: #fff; border-radius: 22px; padding: 2rem 1.5rem; margin: 1rem 0 3rem; display: grid; gap: 1.25rem; align-items: center; }
+  .app { background: var(--card); border: 1px solid var(--line); color: var(--ink); border-radius: 22px; padding: 2rem 1.5rem; margin: 1rem 0 3rem; display: grid; gap: 1.25rem; align-items: center; }
   @media (min-width: 52rem) { .app { grid-template-columns: 1fr auto; padding: 2.5rem; } }
   .app h2 { font-size: 1.8rem; font-weight: 800; }
-  .app p { margin: 0.5rem 0 0; color: #c9ccea; max-width: 36rem; }
-  .app a.btn { display: inline-block; background: #fff; color: var(--ink); font-weight: 600; text-decoration: none; padding: 0.9rem 1.4rem; border-radius: 12px; }
-  .app a.btn:focus-visible { outline-color: #fff; }
+  .app p { margin: 0.5rem 0 0; color: var(--ink-soft); max-width: 36rem; }
+  .app a.btn { display: inline-block; background: var(--accent); color: var(--accent-ink); font-weight: 700; text-decoration: none; padding: 0.9rem 1.4rem; border-radius: 12px; }
 
   footer { border-top: 1px solid var(--line); padding: 1.5rem 0 2.5rem; font-size: 0.95rem; }
   footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; }
@@ -128,9 +145,9 @@
 
         <div class="sample">
           <p class="sample-tag">Example of what a pick looks like</p>
+          <span class="pill" style="--rgb:82,128,189">Music</span>
           <h2>Rooftop jazz session</h2>
           <dl>
-            <dt>Category</dt><dd>Music</dd>
             <dt>When</dt><dd>Saturday, 20:00</dd>
             <dt>Price</dt><dd>Free entry</dd>
             <dt>Address</dt>
@@ -154,6 +171,13 @@
 
           <label for="email">Email</label>
           <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required maxlength="200">
+
+          <div class="pref">
+            <input type="checkbox" id="lgbtq" name="lgbtq">
+            <label for="lgbtq">Include events hosted by LGBTQ+ spaces
+              <small>Optional. Same events that get the rainbow border in the app. Only used to decide which version of the email you get.</small>
+            </label>
+          </div>
 
           <div class="hp" aria-hidden="true">
             <label for="website">Leave this empty</label>
@@ -207,8 +231,8 @@
 </footer>
 
 <script>
-  // ---- SETTINGS: fill these in (see setup notes) ----
-  var SUPABASE_URL = "https://lyflmzufkykzdoanjutk.supabase.co/rest/v1/";
+  // ---- SETTINGS ----
+  var SUPABASE_URL = "https://lyflmzufkykzdoanjutk.supabase.co"; // project URL only, no /rest/v1/ at the end
   var SUPABASE_ANON_KEY = "sb_publishable_mmBj_TA9q1r1w6W_kLENGg_YM1nmcnU";
   // ---------------------------------------------------
 
@@ -245,19 +269,19 @@
       headers: {
         "Content-Type": "application/json",
         "apikey": SUPABASE_ANON_KEY,
-        "Authorization": "Bearer " + SUPABASE_ANON_KEY,
         "Prefer": "return=minimal"
       },
-      body: JSON.stringify({ name: name, email: email.toLowerCase() })
+      body: JSON.stringify({ name: name, email: email.toLowerCase(), lgbtq_events: form.lgbtq.checked })
     }).then(function (res) {
       // 409 = this email is already on the list. Treat it as success.
       if (res.ok || res.status === 409) {
         form.reset();
         say("You're on the list. The first picks arrive this week.", "ok");
       } else {
-        throw new Error("status " + res.status);
+        return res.text().then(function (t) { throw new Error("status " + res.status + " " + t); });
       }
-    }).catch(function () {
+    }).catch(function (err) {
+      console.error("Newsletter signup failed:", err);
       say("Something went wrong. Check your connection and try again.", "err");
     }).then(function () {
       btn.disabled = false;
