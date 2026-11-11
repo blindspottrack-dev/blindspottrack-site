@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Weekly newsletter · BlindSpot Track</title>
+<meta name="description" content="Every week, one or two free event addresses per city: Warsaw, Kraków, Bydgoszcz and Wrocław, picked by the founder of BlindSpot Track.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EDF2F7;
+    --ink: #26262B;
+    --ink-soft: #5f5a66;
+    --accent: #992A81;
+    --accent-ink: #ffffff;
+    --card: #ffffff;
+    --line: #D8DEE6;
+    --error: #b3261e;
+    --ok: #1d6b45;
+    color-scheme: light;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-padding-top: 1rem; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  h1, h2 {
+    font-family: "Bricolage Grotesque", "Figtree", system-ui, sans-serif;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+  header.top { padding: 1.25rem 0; }
+  header.top a { color: var(--ink); font-weight: 600; text-decoration: none; font-family: "Bricolage Grotesque", sans-serif; font-size: 1.15rem; }
+
+  .hero { display: grid; gap: 2.5rem; padding: 2rem 0 3.5rem; align-items: start; }
+  @media (min-width: 52rem) { .hero { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; padding-top: 3.5rem; } }
+
+  h1 { font-size: clamp(2.6rem, 7vw, 4.6rem); font-weight: 800; }
+  .lede { color: var(--ink-soft); max-width: 34rem; margin: 1.25rem 0 0; }
+
+  /* the memorable element: a redacted address you can reveal */
+  .sample { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.5rem; margin-top: 2rem; max-width: 34rem; }
+  .sample-tag { font-size: 0.85rem; color: var(--ink-soft); margin: 0 0 0.75rem; }
+  /* category pill, mirrors EventCategoryBadge in the app */
+  .pill {
+    display: inline-block; margin: 0 0 0.75rem;
+    font: 700 10.5px/12px "SF Pro Rounded", ui-rounded, "Arial Rounded MT Bold", system-ui, sans-serif;
+    letter-spacing: 0.6px; text-transform: uppercase; color: #fff;
+    text-shadow: 0 1px 0.5px rgba(0,0,0,.55);
+    padding: 7px 12px; border-radius: 999px;
+    border: 1px solid rgba(var(--rgb), .9);
+    background: linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,0) 50%),
+                linear-gradient(180deg, rgb(var(--rgb)), rgba(var(--rgb), .7));
+    box-shadow: 0 2px 4px rgba(var(--rgb), .35);
+  }
+  .sample h2 { font-size: 1.5rem; font-weight: 800; }
+  .sample dl { margin: 1rem 0 0; display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1rem; }
+  .sample dt { color: var(--ink-soft); }
+  .sample dd { margin: 0; }
+  .redact {
+    font: inherit; color: inherit; cursor: pointer; text-align: left;
+    background: var(--ink); color: var(--ink); border: 0; border-radius: 6px;
+    padding: 0.05rem 0.6rem; min-width: 12rem; transition: background .25s, color .25s;
+  }
+  .redact[aria-pressed="true"] { background: #f3dcee; color: var(--ink); }
+  .redact .hint { color: #fff; font-size: 0.9rem; }
+  .redact[aria-pressed="true"] .hint { display: none; }
+  .redact .real { display: none; }
+  .redact[aria-pressed="true"] .real { display: inline; }
+
+  .panel { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 1.75rem; }
+  .panel h2 { font-size: 1.7rem; font-weight: 800; margin-bottom: 0.4rem; }
+  .panel p.sub { margin: 0 0 1.25rem; color: var(--ink-soft); }
+  label { display: block; font-weight: 600; margin: 0 0 0.35rem; }
+  input[type="text"], input[type="email"] {
+    width: 100%; font: inherit; color: var(--ink); background: #fff;
+    border: 1.5px solid #b5bcc7; border-radius: 10px; padding: 0.75rem 0.9rem; margin-bottom: 1.1rem;
+  }
+  input[type="text"]:focus-visible, input[type="email"]:focus-visible { outline-offset: 1px; }
+  .consent { display: flex; gap: 0.7rem; align-items: flex-start; font-size: 0.95rem; color: var(--ink-soft); margin-bottom: 1.25rem; }
+  .consent input { margin-top: 0.3rem; width: 1.15rem; height: 1.15rem; flex: none; accent-color: var(--accent); }
+  .consent label { font-weight: 400; margin: 0; }
+  .pref { display: flex; gap: 0.7rem; align-items: flex-start; border: 1.5px solid var(--line); border-radius: 12px; padding: 0.85rem 0.9rem; margin-bottom: 1.1rem; }
+  .pref input { margin-top: 0.3rem; width: 1.15rem; height: 1.15rem; flex: none; accent-color: var(--accent); }
+  .pref label { font-weight: 600; margin: 0; }
+  .pref small { display: block; font-weight: 400; color: var(--ink-soft); font-size: 0.9rem; line-height: 1.4; margin-top: 0.15rem; }
+  .hp { position: absolute; left: -9999px; height: 0; width: 0; overflow: hidden; }
+
+  button.go {
+    width: 100%; font: inherit; font-weight: 600; font-size: 1.05rem; cursor: pointer;
+    background: var(--accent); color: var(--accent-ink); border: 0; border-radius: 12px; padding: 0.9rem 1rem;
+  }
+  button.go:disabled { opacity: .6; cursor: progress; }
+  #status { margin: 1rem 0 0; min-height: 1.5rem; font-weight: 500; }
+  #status.err { color: var(--error); }
+  #status.ok { color: var(--ok); }
+
+  .get { padding: 1rem 0 3rem; display: grid; gap: 2rem; }
+  @media (min-width: 52rem) { .get { grid-template-columns: repeat(3, 1fr); } }
+  .get h2 { font-size: 1.35rem; font-weight: 800; margin-bottom: 0.4rem; }
+  .get p { margin: 0; color: var(--ink-soft); }
+
+  .cities { border-top: 1px solid var(--line); padding: 1.5rem 0; color: var(--ink-soft); }
+
+  .app { background: var(--ink); color: #fff; border-radius: 22px; padding: 2rem 1.5rem; margin: 1rem 0 3rem; display: grid; gap: 1.25rem; align-items: center; }
+  @media (min-width: 52rem) { .app { grid-template-columns: 1fr auto; padding: 2.5rem; } }
+  .app h2 { font-size: 1.8rem; font-weight: 800; }
+  .app p { margin: 0.5rem 0 0; color: #d9d6dc; max-width: 36rem; }
+  .app a.btn { display: inline-block; background: #fff; color: var(--ink); font-weight: 600; text-decoration: none; padding: 0.9rem 1.4rem; border-radius: 12px; }
+  .app a.btn:focus-visible { outline-color: #fff; }
+
+  footer { border-top: 1px solid var(--line); padding: 1.5rem 0 2.5rem; font-size: 0.95rem; }
+  footer .wrap { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; }
+
+  @media (prefers-reduced-motion: reduce) { .redact { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap"><a href="/">BlindSpot Track</a></div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="hero">
+      <div>
+        <h1>Two free addresses, every week.</h1>
+        <p class="lede">Each week I pick one or two events in Warsaw, Kraków, Bydgoszcz and Wrocław and send you the full address, free. No app needed to read it.</p>
+
+        <div class="sample">
+          <p class="sample-tag">Example of what a pick looks like</p>
+          <span class="pill" style="--rgb:82,128,189">Music</span>
+          <h2>Rooftop jazz session</h2>
+          <dl>
+            <dt>When</dt><dd>Saturday, 20:00</dd>
+            <dt>Price</dt><dd>Free entry</dd>
+            <dt>Address</dt>
+            <dd>
+              <button type="button" class="redact" id="reveal" aria-pressed="false">
+                <span class="hint">Tap to reveal</span>
+                <span class="real">Example Street 12, Warsaw</span>
+              </button>
+            </dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="panel" id="signup">
+        <h2>Get the weekly picks</h2>
+        <p class="sub">One email a week. Unsubscribe any time.</p>
+
+        <form id="form" novalidate>
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" autocomplete="given-name" required maxlength="80">
+
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" autocomplete="email" inputmode="email" required maxlength="200">
+
+          <div class="pref">
+            <input type="checkbox" id="lgbtq" name="lgbtq">
+            <label for="lgbtq">Include events hosted by LGBTQ+ spaces
+              <small>Optional. Same events that get the rainbow border in the app. Only used to decide which version of the email you get.</small>
+            </label>
+          </div>
+
+          <div class="hp" aria-hidden="true">
+            <label for="website">Leave this empty</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="consent">
+            <input type="checkbox" id="consent" name="consent" required>
+            <label for="consent">I agree to receive the BlindSpot Track weekly newsletter by email. I can unsubscribe at any time. See the <a href="/privacy">Privacy Policy</a>.</label>
+          </div>
+
+          <button type="submit" class="go" id="submit">Subscribe</button>
+          <p id="status" role="status" aria-live="polite"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="get" aria-labelledby="get-title">
+      <div>
+        <h2 id="get-title">Free addresses</h2>
+        <p>One or two events per city, chosen by me. The full address is in the email, the same one Premium members see in the app.</p>
+      </div>
+      <div>
+        <h2>Events until Sunday</h2>
+        <p>Everything is happening this week. No archive, no old listings.</p>
+      </div>
+      <div>
+        <h2>Straight from the founder</h2>
+        <p>Short and personal. Reply to any email and I read it.</p>
+      </div>
+    </section>
+
+    <p class="cities">Warsaw · Kraków · Bydgoszcz · Wrocław, with more cities to come.</p>
+
+    <section class="app">
+      <div>
+        <h2>Want every event, not just the picks?</h2>
+        <p>BlindSpot Track is on iPhone. New users get 14 days free, then one address reveal a week. Premium unlocks every address.</p>
+      </div>
+      <a class="btn" href="https://apps.apple.com/pl/app/blindspot-track/id6802796631" rel="noopener">Download on the App Store</a>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <a href="/privacy">Privacy Policy</a>
+    <a href="/terms">Terms of Service</a>
+    <a href="/faq">FAQ &amp; Contact</a>
+  </div>
+</footer>
+
+<script>
+  // ---- SETTINGS: fill these in (see setup notes) ----
+  var SUPABASE_URL = "https://lyflmzufkykzdoanjutk.supabase.co"; // project URL only, no /rest/v1/ at the end
+  var SUPABASE_ANON_KEY = "sb_publishable_mmBj_TA9q1r1w6W_kLENGg_YM1nmcnU";
+  // ---------------------------------------------------
+
+  var reveal = document.getElementById("reveal");
+  reveal.addEventListener("click", function () {
+    var on = reveal.getAttribute("aria-pressed") === "true";
+    reveal.setAttribute("aria-pressed", on ? "false" : "true");
+  });
+
+  var form = document.getElementById("form");
+  var statusEl = document.getElementById("status");
+  var btn = document.getElementById("submit");
+
+  function say(msg, kind) {
+    statusEl.textContent = msg;
+    statusEl.className = kind || "";
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = form.name.value.trim();
+    var email = form.email.value.trim();
+
+    if (form.website.value) { say("You're subscribed.", "ok"); return; } // bot trap
+    if (!name) { say("Enter your name.", "err"); form.name.focus(); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { say("Enter a valid email address.", "err"); form.email.focus(); return; }
+    if (!form.consent.checked) { say("Tick the box to confirm you want the newsletter.", "err"); form.consent.focus(); return; }
+
+    btn.disabled = true;
+    say("Subscribing…");
+
+    fetch(SUPABASE_URL + "/rest/v1/newsletter_subscribers", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_ANON_KEY,
+        "Prefer": "return=minimal"
+      },
+      body: JSON.stringify({ name: name, email: email.toLowerCase(), lgbtq_events: form.lgbtq.checked })
+    }).then(function (res) {
+      // 409 = this email is already on the list. Treat it as success.
+      if (res.ok || res.status === 409) {
+        form.reset();
+        say("You're on the list. The first picks arrive this week.", "ok");
+      } else {
+        return res.text().then(function (t) { throw new Error("status " + res.status + " " + t); });
+      }
+    }).catch(function (err) {
+      console.error("Newsletter signup failed:", err);
+      say("Something went wrong. Check your connection and try again.", "err");
+    }).then(function () {
+      btn.disabled = false;
+    });
+  });
+</script>
+</body>
+</html>
