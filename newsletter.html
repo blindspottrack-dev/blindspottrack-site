@@ -44,6 +44,10 @@
   a { color: var(--accent); }
   :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
+  .wrap { max-width: 68rem; margin: 0 auto; padding: 0 1.25rem; }
+  header.top { padding: 1.25rem 0; }
+  header.top a { color: var(--ink); font-weight: 600; text-decoration: none; font-family: "Bricolage Grotesque", sans-serif; font-size: 1.15rem; }
+
   .hero { display: grid; gap: 2.5rem; padding: 2rem 0 3.5rem; align-items: start; }
   @media (min-width: 52rem) { .hero { grid-template-columns: 1.1fr 0.9fr; gap: 4rem; padding-top: 3.5rem; } }
 
@@ -139,19 +143,8 @@
 </head>
 <body>
 
-<header class="site">
-  <a class="brand" href="/">
-    <span class="mark">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="12" cy="12" r="3.2" stroke="#e0459a" stroke-width="1.6"/>
-        <path d="M7 5.5c-1 0-1.5.5-1.5 1.5M17 5.5c1 0 1.5.5 1.5 1.5M7 18.5c-1 0-1.5-.5-1.5-1.5M17 18.5c1 0 1.5-.5 1.5-1.5" stroke="#e0459a" stroke-width="1.6" stroke-linecap="round"/>
-      </svg>
-    </span>
-    BlindSpot Track
-  </a>
-  <nav class="crumbs">
-    <a href="/events">List of Weekly Events</a>
-  </nav>
+<header class="top">
+  <div class="wrap"><a href="/">BlindSpot Track</a></div>
 </header>
 
 <main>
