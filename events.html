@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#121014">
+<title>Events this week · BlindSpot Track</title>
+<meta name="description" content="What's on this week in Warsaw, Kraków, Bydgoszcz and Wrocław: event titles by category, day by day.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #121014;      /* site --bg */
+    --ink: #eae7ea;        /* site --text */
+    --ink-soft: #a8a2ab;   /* site --muted */
+    --accent: #e0459a;     /* site --accent */
+    --accent-ink: #121014;
+    --card: #1b181d;       /* site --panel */
+    --line: #2c2830;       /* site --rule */
+    --field: #3b3840;      /* app authField (dark) */
+    --field-line: rgba(255,255,255,.06);
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    margin: 0; background: var(--paper); color: var(--ink);
+    font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 1.0625rem; line-height: 1.6; -webkit-font-smoothing: antialiased;
+    padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  a { color: var(--accent); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  .wrap { max-width: 36rem; margin: 0 auto; padding: 0 1.25rem; }
+  header.top { padding: 1.25rem 0; }
+  header.top a { color: var(--ink); font-weight: 600; text-decoration: none; font-family: "Bricolage Grotesque", sans-serif; font-size: 1.15rem; }
+
+  h1 { font-family: "Bricolage Grotesque", "Figtree", sans-serif; font-weight: 800; font-size: 2rem; line-height: 1.1; letter-spacing: -0.02em; margin: 0.5rem 0 1.25rem; }
+
+  /* ---- pickers: same look as the app's Country / City fields ---- */
+  .pickers { display: grid; gap: 12px; margin-bottom: 14px; }
+  @media (min-width: 30rem) { .pickers { grid-template-columns: 1fr 1fr; } }
+  .field { position: relative; }
+  .field select {
+    appearance: none; -webkit-appearance: none; width: 100%; height: 52px; cursor: pointer;
+    font: 500 17px/1 "Figtree", system-ui, sans-serif; color: var(--ink);
+    background: var(--field); border: 1px solid var(--field-line); border-radius: 14px;
+    padding: 0 44px 0 18px;
+  }
+  .field select:invalid { color: #8e8e93; }
+  .field select:disabled { cursor: not-allowed; opacity: .75; }
+  .field select option { color: #111; background: #fff; }
+  .field::after {
+    content: ""; position: absolute; right: 18px; top: 50%; width: 9px; height: 9px; margin-top: -7px;
+    border-right: 2px solid #8e8e93; border-bottom: 2px solid #8e8e93; transform: rotate(45deg); pointer-events: none;
+  }
+
+  /* ---- day bar: same as Museums for Free (arrows + day name, Monday to Sunday) ---- */
+  .daybar { display: flex; align-items: center; justify-content: space-between; padding: 6px 0; }
+  .daybar button.arrow {
+    width: 44px; height: 44px; border: 0; background: none; cursor: pointer; color: var(--accent);
+    display: grid; place-items: center; border-radius: 50%;
+  }
+  .daybar svg { width: 18px; height: 18px; }
+  .daybar .label { text-align: center; min-width: 9rem; font-weight: 600; font-size: 1.05rem; }
+  .daybar .label small { display: block; color: var(--ink-soft); font-weight: 500; font-size: 0.85rem; line-height: 1.2; }
+
+  .tools { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; justify-content: space-between; margin: 2px 0 18px; }
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+  .seg button { font: 600 0.9rem "Figtree", sans-serif; color: var(--ink-soft); background: none; border: 0; border-radius: 999px; padding: 7px 14px; cursor: pointer; min-height: 34px; }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); }
+  .check { display: flex; align-items: center; gap: 8px; color: var(--ink-soft); font-size: 0.92rem; cursor: pointer; }
+  .check input { width: 18px; height: 18px; accent-color: var(--accent); }
+
+  /* ---- the 3:4 card you screenshot for Instagram ---- */
+  .card {
+    container-type: inline-size; position: relative;
+    width: min(100%, 560px); margin: 0 auto; aspect-ratio: 3 / 4; overflow: hidden;
+    border-radius: 24px; border: 1px solid var(--line);
+    background:
+      radial-gradient(circle at 10% -6%, rgba(224,69,154,.17), transparent 52%),
+      radial-gradient(circle at 104% 106%, rgba(224,69,154,.10), transparent 46%),
+      var(--paper);
+  }
+  .card-in { position: absolute; inset: 0; display: flex; flex-direction: column; padding: 6cqw 7cqw 5cqw; }
+  .card.expanded { aspect-ratio: auto; overflow: visible; }
+  .card.expanded .card-in { position: static; }
+
+  .head .row { display: flex; align-items: baseline; justify-content: space-between; gap: 3cqw; }
+  .country { font-family: "Bricolage Grotesque", "Figtree", sans-serif; font-weight: 800; font-size: 6.8cqw; line-height: 1.05; letter-spacing: -0.02em; }
+  .range { color: var(--ink-soft); font-size: 3.4cqw; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .city { font-weight: 600; font-size: 4.3cqw; line-height: 1.2; margin-top: .6cqw; }
+  .dayname { text-align: center; color: var(--accent); font-weight: 700; font-size: 3.9cqw; letter-spacing: .02em; margin: 3.2cqw 0 3cqw; }
+
+  .list { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+  .card.expanded .list { flex: none; overflow: visible; }
+  .cat { margin: 0 0 2.8cqw; }
+  .cat h3 { margin: 0 0 1.6cqw; padding-bottom: 1cqw; font-size: 3.4cqw; line-height: 1.2; font-weight: 700; border-bottom: max(1px, .3cqw) solid var(--c, var(--accent)); }
+  .cat ul { list-style: none; margin: 0; padding: 0; }
+  .cat li { font-size: 2.95cqw; line-height: 1.3; margin: 0 0 1.1cqw; overflow-wrap: anywhere; }
+  .msg { color: var(--ink-soft); font-size: 3.2cqw; text-align: center; padding: 8cqw 0; }
+  .more {
+    display: inline-flex; align-items: center; gap: 1.6cqw; background: none; border: 0; cursor: pointer;
+    color: var(--accent); font: 700 2.9cqw "Figtree", sans-serif; letter-spacing: .09em; text-transform: uppercase;
+    min-height: 40px; padding: 0;
+  }
+  .more svg { width: 3.4cqw; height: 3.4cqw; min-width: 11px; min-height: 11px; transition: transform .2s; }
+  .card.expanded .more svg { transform: rotate(180deg); }
+
+  .cta { flex: none; margin-top: 1cqw; padding-top: 2.6cqw; border-top: 1px solid var(--line); font-size: 2.6cqw; line-height: 1.5; color: var(--ink-soft); }
+  .cta p { margin: 0 0 .6cqw; font-size: inherit; color: inherit; }
+  .cta a { font-weight: 700; }
+
+  .note { width: min(100%, 560px); margin: 14px auto 40px; color: var(--ink-soft); font-size: .9rem; }
+
+  @media (prefers-reduced-motion: reduce) { .more svg { transition: none; } }
+</style>
+</head>
+<body>
+
+<header class="top"><div class="wrap"><a href="/">BlindSpot Track</a></div></header>
+
+<main class="wrap">
+  <h1>Events this week</h1>
+
+  <div class="pickers">
+    <div class="field">
+      <label class="sr-only" for="country">Country</label>
+      <select id="country" required><option value="" disabled selected hidden>Country</option></select>
+    </div>
+    <div class="field">
+      <label class="sr-only" for="city">City</label>
+      <select id="city" required disabled><option value="" disabled selected hidden>City</option></select>
+    </div>
+  </div>
+
+  <div class="daybar" id="daybar">
+    <button type="button" class="arrow" id="prev" aria-label="Previous day">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11.5 3.5 6 9l5.5 5.5"/></svg>
+    </button>
+    <div class="label" id="daylabel" aria-live="polite">Monday<small>16.11</small></div>
+    <button type="button" class="arrow" id="next" aria-label="Next day">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.5 3.5 12 9l-5.5 5.5"/></svg>
+    </button>
+  </div>
+
+  <div class="tools">
+    <div class="seg" role="group" aria-label="Week">
+      <button type="button" id="wk0" aria-pressed="true">This week</button>
+      <button type="button" id="wk1" aria-pressed="false">Next week</button>
+    </div>
+    <label class="check"><input type="checkbox" id="lgbtq"> Include LGBTQ+ space events</label>
+  </div>
+
+  <section class="card" id="card" aria-label="Events list">
+    <div class="card-in">
+      <div class="head">
+        <div class="row"><span class="country" id="c-country">&nbsp;</span><span class="range" id="c-range"></span></div>
+        <div class="city" id="c-city">&nbsp;</div>
+        <div class="dayname" id="c-day"></div>
+      </div>
+
+      <div class="list" id="list" aria-live="polite"></div>
+
+      <div class="cta">
+        <p>Want details and addresses?</p>
+        <p><a href="/newsletter.html">Subscribe to the 100% free Weekly Newsletter</a></p>
+        <p>Or <a href="https://apps.apple.com/pl/app/blindspot-track/id6802796631" rel="noopener">get the app on your iPhone</a></p>
+      </div>
+    </div>
+  </section>
+
+  <p class="note">Take a screenshot of the card above. Events appear with their title only, grouped by category, and the list updates by itself.</p>
+</main>
+
+<script>
+(function () {
+  // ---- SETTINGS ----
+  var SUPABASE_URL = "https://lyflmzufkykzdoanjutk.supabase.co";
+  var SUPABASE_ANON_KEY = "sb_publishable_mmBj_TA9q1r1w6W_kLENGg_YM1nmcnU";
+  var REFRESH_MS = 60 * 1000;
+  // ------------------
+
+  // Same colors as AppColors.categoryPalette in the app; anything else uses the brand pink.
+  var CAT_COLORS = {
+    "Nightlife": "#805CB8", "Music": "#5280BD", "Art": "#BD6685",
+    "Sport": "#528F70", "Business": "#9E8557", "Urban": "#2E8085"
+  };
+  var DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var el = {
+    country: $("country"), city: $("city"), prev: $("prev"), next: $("next"), dayLabel: $("daylabel"),
+    wk0: $("wk0"), wk1: $("wk1"), lgbtq: $("lgbtq"), card: $("card"), list: $("list"),
+    cCountry: $("c-country"), cCity: $("c-city"), cRange: $("c-range"), cDay: $("c-day")
+  };
+
+  var st = { countries: [], cities: [], countryId: null, cityId: null, weekOffset: 0, dayIndex: 0,
+             rows: null, expanded: false, requestId: 0, lastKey: "" };
+
+  function headers() { return { "apikey": SUPABASE_ANON_KEY, "Content-Type": "application/json" }; }
+
+  function get(path) {
+    return fetch(SUPABASE_URL + "/rest/v1/" + path, { headers: headers() }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    });
+  }
+
+  function rpc(name, body) {
+    return fetch(SUPABASE_URL + "/rest/v1/rpc/" + name, { method: "POST", headers: headers(), body: JSON.stringify(body) })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
+  }
+
+  // ---------- dates (always in the selected city's own timezone) ----------
+  function currentCity() { return st.cities.filter(function (c) { return c.id === st.cityId; })[0] || null; }
+  function currentCountry() { return st.countries.filter(function (c) { return c.id === st.countryId; })[0] || null; }
+  function tz() { var c = currentCity(); return (c && c.timezone) || "Europe/Warsaw"; }
+
+  function todayISO() {
+    try {
+      return new Intl.DateTimeFormat("en-CA", { timeZone: tz(), year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
+    } catch (e) { return new Date().toISOString().slice(0, 10); }
+  }
+  function isoToUTC(iso) { var p = iso.split("-"); return Date.UTC(+p[0], +p[1] - 1, +p[2]); }
+  function utcToISO(ms) { return new Date(ms).toISOString().slice(0, 10); }
+  function todayIndex() { return (new Date(isoToUTC(todayISO())).getUTCDay() + 6) % 7; } // Monday = 0
+
+  function weekDates() {
+    var t = isoToUTC(todayISO());
+    var monday = t - todayIndex() * 864e5 + st.weekOffset * 7 * 864e5;
+    var out = [];
+    for (var i = 0; i < 7; i++) out.push(utcToISO(monday + i * 864e5));
+    return out;
+  }
+  function dm(iso) { return iso.slice(8, 10) + "." + iso.slice(5, 7); }
+
+  // ---------- pickers ----------
+  function sortByName(a, b) { return a.name.localeCompare(b.name, "en", { sensitivity: "base" }); }
+
+  function fillCountries() {
+    el.country.innerHTML = '<option value="" disabled hidden>Country</option>';
+    st.countries.slice().sort(sortByName).forEach(function (c) {
+      var o = document.createElement("option"); o.value = c.id; o.textContent = c.name; el.country.appendChild(o);
+    });
+    el.country.value = st.countryId == null ? "" : String(st.countryId);
+  }
+
+  function fillCities() {
+    el.city.innerHTML = "";
+    if (st.countryId == null) {
+      el.city.disabled = true;
+      el.city.innerHTML = '<option value="" disabled selected>Choose Country first.</option>';
+      return;
+    }
+    el.city.disabled = false;
+    el.city.innerHTML = '<option value="" disabled hidden>City</option>';
+    st.cities.filter(function (c) { return c.country_id === st.countryId; }).sort(sortByName).forEach(function (c) {
+      var o = document.createElement("option"); o.value = c.id; o.textContent = c.name; el.city.appendChild(o);
+    });
+    el.city.value = st.cityId == null ? "" : String(st.cityId);
+  }
+
+  function saveSelection() {
+    try { localStorage.setItem("bs_events_loc", JSON.stringify({ c: st.countryId, y: st.cityId })); } catch (e) {}
+  }
+  function restoreSelection() {
+    var saved = null;
+    try { saved = JSON.parse(localStorage.getItem("bs_events_loc") || "null"); } catch (e) {}
+    var city = saved && st.cities.filter(function (c) { return c.id === saved.y && c.country_id === saved.c; })[0];
+    if (!city) {
+      var pl = st.countries.filter(function (c) { return c.name === "Poland"; })[0];
+      city = pl && st.cities.filter(function (c) { return c.country_id === pl.id && c.name === "Warsaw"; })[0];
+    }
+    if (city) { st.countryId = city.country_id; st.cityId = city.id; }
+  }
+
+  // ---------- header / day bar ----------
+  function renderChrome() {
+    var week = weekDates();
+    var day = week[st.dayIndex];
+    el.dayLabel.innerHTML = DAYS[st.dayIndex] + "<small>" + dm(day) + "</small>";
+    el.wk0.setAttribute("aria-pressed", st.weekOffset === 0);
+    el.wk1.setAttribute("aria-pressed", st.weekOffset === 1);
+    var country = currentCountry(), city = currentCity();
+    el.cCountry.textContent = country ? country.name : "\u00a0";
+    el.cCity.textContent = city ? city.name : "\u00a0";
+    el.cRange.textContent = dm(week[0]) + "-" + dm(week[6]);
+    el.cDay.textContent = DAYS[st.dayIndex];
+  }
+
+  // ---------- events ----------
+  function groupRows(rows) {
+    var map = {};
+    rows.forEach(function (r) { (map[r.category] = map[r.category] || []).push(r.title); });
+    return Object.keys(map).sort(function (a, b) { return a.localeCompare(b, "en", { sensitivity: "base" }); })
+      .map(function (k) { return { category: k, titles: map[k] }; });
+  }
+
+  function chevron() {
+    return '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 4.2 6 8l4-3.8"/></svg>';
+  }
+
+  function renderList() {
+    el.list.innerHTML = "";
+    if (st.rows === null) return;
+    var groups = groupRows(st.rows);
+
+    if (!groups.length) {
+      var m = document.createElement("p"); m.className = "msg";
+      m.textContent = "No events listed for " + DAYS[st.dayIndex] + " yet.";
+      el.list.appendChild(m);
+      el.card.classList.remove("expanded");
+      return;
+    }
+
+    groups.forEach(function (g) {
+      var wrap = document.createElement("div"); wrap.className = "cat";
+      wrap.style.setProperty("--c", CAT_COLORS[g.category] || "var(--accent)");
+      var h = document.createElement("h3"); h.textContent = g.category; wrap.appendChild(h);
+      var ul = document.createElement("ul");
+      g.titles.forEach(function (t) { var li = document.createElement("li"); li.textContent = t; ul.appendChild(li); });
+      wrap.appendChild(ul); el.list.appendChild(wrap);
+    });
+
+    var more = document.createElement("button");
+    more.type = "button"; more.className = "more"; more.id = "more"; more.hidden = true;
+    more.addEventListener("click", function () {
+      st.expanded = !st.expanded;
+      el.card.classList.toggle("expanded", st.expanded);
+      fit();
+    });
+    el.list.appendChild(more);
+    fit();
+  }
+
+  // Keeps the card at exactly 3:4: hides whatever does not fit and shows "AND N MORE".
+  function fit() {
+    var more = $("more");
+    if (!more) return;
+    var items = [].slice.call(el.list.querySelectorAll(".cat h3, .cat li"));
+    var groups = [].slice.call(el.list.querySelectorAll(".cat"));
+    items.forEach(function (n) { n.hidden = false; });
+    groups.forEach(function (g) { g.hidden = false; });
+
+    if (st.expanded) {
+      more.hidden = false;
+      more.setAttribute("aria-expanded", "true");
+      more.innerHTML = "Show less " + chevron();
+      return;
+    }
+
+    var overflows = function () { return el.list.scrollHeight > el.list.clientHeight + 1; };
+    more.hidden = true;
+    if (!overflows()) return;
+
+    more.hidden = false;
+    more.setAttribute("aria-expanded", "false");
+    for (var i = items.length - 1; i >= 0 && overflows(); i--) {
+      items[i].hidden = true;
+      groups.forEach(function (g) { g.hidden = !g.querySelector("li:not([hidden])"); });
+    }
+    var hiddenCount = items.filter(function (n) { return n.tagName === "LI" && n.hidden; }).length;
+    if (hiddenCount === 0) { more.hidden = true; return; }
+    more.innerHTML = "And " + hiddenCount + " more " + chevron();
+  }
+
+  function loadEvents(quiet) {
+    var city = currentCity();
+    if (!city) { st.rows = null; renderList(); return; }
+    var day = weekDates()[st.dayIndex];
+    var key = [city.id, day, el.lgbtq.checked].join("|");
+    var id = ++st.requestId;
+    if (!quiet) { st.rows = null; el.list.innerHTML = '<p class="msg">Loading…</p>'; }
+
+    rpc("web_event_titles", { p_city_id: city.id, p_day: day, p_include_lgbtq: el.lgbtq.checked })
+      .then(function (rows) {
+        if (id !== st.requestId) return; // a newer request replaced this one
+        var sig = key + JSON.stringify(rows);
+        if (quiet && sig === st.lastKey) return; // nothing changed, don't redraw
+        st.lastKey = sig; st.rows = rows; renderList();
+      })
+      .catch(function (err) {
+        if (id !== st.requestId || quiet) return;
+        console.error("Events failed to load:", err);
+        st.rows = null;
+        el.list.innerHTML = '<p class="msg">Couldn\u2019t load events. Check your connection and try again.</p>';
+      });
+  }
+
+  function refresh() { st.expanded = false; el.card.classList.remove("expanded"); renderChrome(); loadEvents(false); }
+
+  // ---------- events from the controls ----------
+  el.country.addEventListener("change", function () {
+    st.countryId = +el.country.value; st.cityId = null; fillCities(); saveSelection(); renderChrome(); st.rows = null; st.requestId++; el.list.innerHTML = '<p class="msg">Choose a city.</p>';
+  });
+  el.city.addEventListener("change", function () { st.cityId = +el.city.value; saveSelection(); st.dayIndex = st.weekOffset ? 0 : todayIndex(); refresh(); });
+
+  function step(d) { st.dayIndex = (st.dayIndex + d + 7) % 7; refresh(); }
+  el.prev.addEventListener("click", function () { step(-1); });
+  el.next.addEventListener("click", function () { step(1); });
+
+  function setWeek(n) { st.weekOffset = n; st.dayIndex = n ? 0 : todayIndex(); refresh(); }
+  el.wk0.addEventListener("click", function () { setWeek(0); });
+  el.wk1.addEventListener("click", function () { setWeek(1); });
+  el.lgbtq.addEventListener("change", refresh);
+
+  // swipe left / right over the card or day bar changes the day, like in the app
+  var sx = 0, sy = 0;
+  [el.card, $("daybar")].forEach(function (node) {
+    node.addEventListener("touchstart", function (e) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }, { passive: true });
+    node.addEventListener("touchend", function (e) {
+      var dx = e.changedTouches[0].clientX - sx, dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) step(dx < 0 ? 1 : -1);
+    }, { passive: true });
+  });
+
+  // keep the list fresh without reloading the page
+  setInterval(function () { if (!document.hidden && currentCity()) loadEvents(true); }, REFRESH_MS);
+  document.addEventListener("visibilitychange", function () { if (!document.hidden && currentCity()) loadEvents(true); });
+  var resizeTimer;
+  window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(fit, 120); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+
+  // ---------- start ----------
+  Promise.all([get("countries?select=id,name"), get("cities?select=id,name,country_id,timezone")])
+    .then(function (res) {
+      st.countries = res[0]; st.cities = res[1];
+      restoreSelection();
+      fillCountries(); fillCities();
+      st.dayIndex = todayIndex();
+      refresh();
+    })
+    .catch(function (err) {
+      console.error("Locations failed to load:", err);
+      el.list.innerHTML = '<p class="msg">Couldn\u2019t load locations. Check your connection and reload.</p>';
+    });
+})();
+</script>
+</body>
+</html>
